@@ -3,6 +3,8 @@ import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
 function AdminDashboard() {
   const navigate = useNavigate();
   const { user, token, logout } = useAuth();
@@ -17,7 +19,7 @@ function AdminDashboard() {
         setLoading(true);
         setError("");
 
-        const response = await axios.get("http://localhost:5000/api/admin/dashboard", {
+        const response = await axios.get(`${API_BASE_URL}/api/admin/dashboard`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },

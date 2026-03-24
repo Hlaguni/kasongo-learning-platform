@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { useAuth } from "../../context/AuthContext";
 
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
 function AdminUsers() {
   const { token } = useAuth();
 
@@ -22,7 +24,7 @@ function AdminUsers() {
       setLoading(true);
       setError("");
 
-      const response = await axios.get("http://localhost:5000/api/admin/users", {
+      const response = await axios.get(`${API_BASE_URL}/api/admin/users`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -56,7 +58,7 @@ function AdminUsers() {
       setError("");
       setSuccess("");
 
-      await axios.post("http://localhost:5000/api/admin/users", formData, {
+      await axios.post(`${API_BASE_URL}/api/admin/users`, formData, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -88,7 +90,7 @@ function AdminUsers() {
       setError("");
       setSuccess("");
 
-      await axios.delete(`http://localhost:5000/api/admin/users/${userId}`, {
+      await axios.delete(`${API_BASE_URL}/api/admin/users/${userId}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
