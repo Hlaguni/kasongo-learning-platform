@@ -16,31 +16,9 @@ seedTopics();
 
 const app = express();
 
-const allowedOrigins = [
-  "http://localhost:5173",
-  "http://127.0.0.1:5173",
-  "https://kasongo-learning.vercel.app",
-];
-
-const corsOptions = {
-  origin: function (origin, callback) {
-    console.log("Request origin:", origin);
-
-    if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error("Not allowed by CORS"));
-    }
-  },
-  methods: ["GET", "POST", "PUT", "DELETE"],
-  allowedHeaders: ["Content-Type", "Authorization"],
-  credentials: true,
-};
-
-app.use(cors(corsOptions));
+app.use(cors());
 app.use(express.json());
 
-// ✅ health route
 app.get("/api/health", (req, res) => {
   res.status(200).json({ message: "API is running" });
 });
