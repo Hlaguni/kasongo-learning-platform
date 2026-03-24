@@ -1,0 +1,118 @@
+@baseUrl = http://localhost:5000
+@adminToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5YmE2NDNkZjQ3NjMwMDA1ZjdkMzZiNCIsImlhdCI6MTc3NDI0ODU1OSwiZXhwIjoxNzc2ODQwNTU5fQ.q66jYfSLaMLvEtnzLnNoQ6maKzf0fuW97oCv-sbyNqQ
+@studentToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5YmE2NGIyZjQ3NjMwMDA1ZjdkMzZiZiIsImlhdCI6MTc3Mzg0Mzc3NSwiZXhwIjoxNzc2NDM1Nzc1fQ.FXYlUe_fXYGLs-hpNfmsnZIDPYbhI67E2ETeWKlJ-Yk
+@studentId = REPLACE_WITH_STUDENT_ID
+
+#######################################
+### 1. AUTH
+#######################################
+
+### Register Admin
+POST {{baseUrl}}/api/auth/register
+Content-Type: application/json
+
+{
+  "name": "admin2",
+  "email": "admin2@gmail.com",
+  "passwor": "123456789",
+  "role": "admin"
+}
+
+### Admin Login
+POST {{baseUrl}}/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "admin2@gmail.com",
+  "password": "123456789"
+}
+
+### Student Login
+POST {{baseUrl}}/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "student2@gmail.com",
+  "password": "123456789"
+}
+
+### Get Current User
+GET {{baseUrl}}/api/auth/me
+Authorization: Bearer {{adminToken}}
+
+#######################################
+### 2. ADMIN
+#######################################
+
+### Admin Dashboard
+GET {{baseUrl}}/api/admin/dashboard
+Authorization: Bearer {{adminToken}}
+
+### Create Student
+POST {{baseUrl}}/api/admin/users
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "name": "student2",
+  "email": "student2@gmail.com",
+  "password": "123456789",
+  "role": "student"
+}
+
+### Get All Users
+GET {{baseUrl}}/api/admin/users
+Authorization: Bearer {{adminToken}}
+
+### Delete User
+DELETE {{baseUrl}}/api/admin/users/REPLACE_WITH_USER_ID
+Authorization: Bearer {{adminToken}}
+
+#######################################
+### 3. LESSONS
+#######################################
+
+### Create Lesson
+POST {{baseUrl}}/api/lesson
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "title": "Domain and Range",
+  "topicId": "69bab2d57f9c3b5d268c123e",
+  "videoUrl": "https://youtube.com/example",
+  "description": "Intro to domain and range"
+}
+###GET 
+GET {{baseUrl}}/api/lesson
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+
+#######################################
+### 4. ATTENDANCE
+#######################################
+
+### Mark Attendance
+POST {{baseUrl}}/api/attendance
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "student": "{{studentId}}",
+  "date": "2026-03-18",
+  "status": "present",
+  "note": "Present for lesson"
+}
+
+### Get All Attendance
+GET {{baseUrl}}/api/attendance
+Authorization: Bearer {{adminToken}}
+
+### Get My Attendance
+GET {{baseUrl}}/api/attendance/my-attendance
+Authorization: Bearer {{studentToken}}
+
+
+###topic
+GET http://localhost:5000/api/topics
