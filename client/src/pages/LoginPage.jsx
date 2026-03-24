@@ -23,35 +23,41 @@ function LoginPage() {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    setError("");
-    setSubmitting(true);
+  e.preventDefault();
+  setError("");
+  setSubmitting(true);
 
-    try {
-      const loginResponse = await loginUser(formData.email, formData.password);
-      const token = loginResponse.token;
+  try {
+    const loginResponse = await loginUser(formData.email, formData.password);
 
-      const userData = await getCurrentUser(token);
+    const token = loginResponse.token;
 
-      login(userData, token);
+    const userData = {
+      _id: loginResponse._id,
+      name: loginResponse.name,
+      email: loginResponse.email,
+      role: loginResponse.role,
+    };
 
-      if (userData.role === "admin") {
-        navigate("/admin");
-      } else if (userData.role === "student") {
-        navigate("/student");
-      } else {
-        navigate("/login");
-      }
-    } catch (err) {
-      setError(err.response?.data?.message || "Login failed");
-    } finally {
-      setSubmitting(false);
+    login(userData, token);
+
+    if (userData.role === "admin") {
+      navigate("/admin");
+    } else if (userData.role === "student") {
+      navigate("/student");
+    } else {
+      navigate("/login");
     }
-  };
+  } catch (err) {
+    setError(err.response?.data?.message || "Login failed");
+  } finally {
+    setSubmitting(false);
+  }
+};
 
   return (
     <div style={{ padding: "2rem" }}>
-      <h1>Login Page</h1>
+      <h1>Kasongo Academy</h1>
 
       <form onSubmit={handleSubmit} style={{ maxWidth: "300px" }}>
         <div style={{ marginBottom: "1rem" }}>
