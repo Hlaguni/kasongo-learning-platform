@@ -1,7 +1,6 @@
-import { createContext, useContext, useEffect, useState } from "react";
-import { getCurrentUser } from "../services/authService";
+import { createContext, useEffect, useState } from "react";
 
-const AuthContext = createContext();
+export const AuthContext = createContext();
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
@@ -9,47 +8,44 @@ export function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const loadUser = async () => {
-      if (!token) {
-        setLoading(false);
-        return;
-      }
+    const storedUser = localStorage.getItem("user");
+    const storedToken = localStorage.getItem("token");
 
+    if (storedUser && storedToken) {
       try {
-        const userData = await getCurrentUser(token);
-        setUser(userData);
+        setUser(JSON.parse(storedUser));
+        setToken(storedToken);
       } catch (error) {
-        console.error("Failed to load user:", error.response?.data || error.message);
-
-        // Clear invalid token
+        console.error("Error parsing stored user:", error);
+        localStorage.removeItem("user");
         localStorage.removeItem("token");
-        setToken("");
         setUser(null);
-      } finally {
-        setLoading(false);
+        setToken("");
       }
-    };
+    } else {
+      localStorage.removeItem("user");
+      localStorage.removeItem("token");
+      setUser(null);
+      setToken("");
+    }
 
-    loadUser();
-  }, [token]);
+    setLoading(false);
+  }, []);
 
-  const login = (userData, authToken) => {
+  const login = (userData, userToken) => {
     setUser(userData);
-    setToken(authToken);
+    setToken(userToken);
 
-    // Persist token
-    localStorage.setItem("token", authToken);
-
-    // OPTIONAL (but useful): persist user too
     localStorage.setItem("user", JSON.stringify(userData));
+    localStorage.setItem("token", userToken);
   };
 
   const logout = () => {
     setUser(null);
     setToken("");
 
-    localStorage.removeItem("token");
     localStorage.removeItem("user");
+    localStorage.removeItem("token");
   };
 
   return (
@@ -60,14 +56,10 @@ export function AuthProvider({ children }) {
         loading,
         login,
         logout,
-        isAuthenticated: !!user, // 🔥 useful flag
+        isAuthenticated: !!token && !!user,
       }}
     >
       {children}
     </AuthContext.Provider>
   );
-}
-
-export function useAuth() {
-  return useContext(AuthContext);
 }

@@ -1,118 +1,1136 @@
 @baseUrl = http://localhost:5000
-@adminToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5YmE2NDNkZjQ3NjMwMDA1ZjdkMzZiNCIsImlhdCI6MTc3NDI0ODU1OSwiZXhwIjoxNzc2ODQwNTU5fQ.q66jYfSLaMLvEtnzLnNoQ6maKzf0fuW97oCv-sbyNqQ
-@studentToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5YmE2NGIyZjQ3NjMwMDA1ZjdkMzZiZiIsImlhdCI6MTc3Mzg0Mzc3NSwiZXhwIjoxNzc2NDM1Nzc1fQ.FXYlUe_fXYGLs-hpNfmsnZIDPYbhI67E2ETeWKlJ-Yk
-@studentId = REPLACE_WITH_STUDENT_ID
 
 #######################################
-### 1. AUTH
+### ACTIVE TEST VARIABLES
 #######################################
 
-### Register Admin
+@adminToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5Y2QyNWQ0ZmY0M2NkYzE2MGEwZjg3NyIsImlhdCI6MTc3NTI5NzcyMiwiZXhwIjoxNzc3ODg5NzIyfQ.5DSwPv7dtlHb7rkeSIGyDbDRM8CWjaPBWNlsPX4yfyE
+@studentToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5Y2RkMGI4ZDgzZWI4MjUwYTFkMzQ5ZCIsImlhdCI6MTc3NTA5NTk5MywiZXhwIjoxNzc3Njg3OTkzfQ.yHkQA2yzAb5H6VVUvbD-0VpH_brxy4V3w7qWqvXZeJw
+@educatorToken = REPLACE_LESSON_ID
+
+@adminUserId = 69cd25d4ff43cdc160a0f877
+@studentUserId = 69cdd0b8d83eb8250a1d349d
+@educatorUserId = REPLACE_LESSON_ID
+
+@gradeId = 69cdd100d83eb8250a1d34a2
+@secondGradeId = REPLACE_LESSON_ID
+
+@subjectId = 69cdd14ed83eb8250a1d34ad
+@secondSubjectId = 69ce8ce0384fcadc8e6c7781
+
+@topicId = 69cdd266d83eb8250a1d34e1
+@lessonId = 69cdd5671f729203429e1284
+@enrollmentId = 69cdd1b7d83eb8250a1d34c0
+
+#######################################
+### 1. HEALTH
+#######################################
+
+### API Health
+GET {{baseUrl}}/api/health
+
+#######################################
+### 2. AUTH
+#######################################
+
+### Admin creates educator
 POST {{baseUrl}}/api/auth/register
-Content-Type: application/json
-
-{
-  "name": "admin2",
-  "email": "admin2@gmail.com",
-  "passwor": "123456789",
-  "role": "admin"
-}
-
-### Admin Login
-POST {{baseUrl}}/api/auth/login
-Content-Type: application/json
-
-{
-  "email": "admin2@gmail.com",
-  "password": "123456789"
-}
-
-### Student Login
-POST {{baseUrl}}/api/auth/login
-Content-Type: application/json
-
-{
-  "email": "student2@gmail.com",
-  "password": "123456789"
-}
-
-### Get Current User
-GET {{baseUrl}}/api/auth/me
-Authorization: Bearer {{adminToken}}
-
-#######################################
-### 2. ADMIN
-#######################################
-
-### Admin Dashboard
-GET {{baseUrl}}/api/admin/dashboard
-Authorization: Bearer {{adminToken}}
-
-### Create Student
-POST {{baseUrl}}/api/admin/users
 Authorization: Bearer {{adminToken}}
 Content-Type: application/json
 
 {
-  "name": "student2",
-  "email": "student2@gmail.com",
+  "name": "Educator One",
+  "email": "educator1@example.com",
+  "password": "123456789",
+  "role": "educator"
+}
+
+###
+
+### Admin creates student
+POST {{baseUrl}}/api/auth/register
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "name": "Student One",
+  "email": "student1@example.com",
   "password": "123456789",
   "role": "student"
 }
 
-### Get All Users
-GET {{baseUrl}}/api/admin/users
-Authorization: Bearer {{adminToken}}
+###
 
-### Delete User
-DELETE {{baseUrl}}/api/admin/users/REPLACE_WITH_USER_ID
-Authorization: Bearer {{adminToken}}
-
-#######################################
-### 3. LESSONS
-#######################################
-
-### Create Lesson
-POST {{baseUrl}}/api/lesson
-Authorization: Bearer {{adminToken}}
+### Register without token (should fail if route is protected)
+POST {{baseUrl}}/api/auth/register
 Content-Type: application/json
 
 {
-  "title": "Domain and Range",
-  "topicId": "69bab2d57f9c3b5d268c123e",
-  "videoUrl": "https://youtube.com/example",
-  "description": "Intro to domain and range"
+  "name": "Unauthorized User",
+  "email": "unauthorized@example.com",
+  "password": "123456789",
+  "role": "student"
 }
-###GET 
-GET {{baseUrl}}/api/lesson
-Authorization: Bearer {{adminToken}}
-Content-Type: application/json
 
+###
 
-#######################################
-### 4. ATTENDANCE
-#######################################
-
-### Mark Attendance
-POST {{baseUrl}}/api/attendance
-Authorization: Bearer {{adminToken}}
+### Login admin
+POST {{baseUrl}}/api/auth/login
 Content-Type: application/json
 
 {
-  "student": "{{studentId}}",
-  "date": "2026-03-18",
-  "status": "present",
-  "note": "Present for lesson"
+  "email": "mngunimahlako@gmail.com",
+  "password": "Katembura@3"
 }
 
-### Get All Attendance
-GET {{baseUrl}}/api/attendance
+
+
+#######################################
+### STUDENTS
+#######################################
+
+### Admin: get single student by ID
+GET {{baseUrl}}/api/students/{{studentUserId}}
 Authorization: Bearer {{adminToken}}
 
-### Get My Attendance
-GET {{baseUrl}}/api/attendance/my-attendance
+###
+
+### Admin: get single student's enrollments
+GET {{baseUrl}}/api/students/{{studentUserId}}/enrollments
+Authorization: Bearer {{adminToken}}
+
+
+#######################################
+### STUDENTS
+#######################################
+
+### Admin: get all students
+GET {{baseUrl}}/api/students
+Authorization: Bearer {{adminToken}}
+
+###
+
+### Admin: get students by search
+GET {{baseUrl}}/api/students?search=stud
+Authorization: Bearer {{adminToken}}
+
+###
+
+### Admin: get active students
+GET {{baseUrl}}/api/students?isActive=true
+Authorization: Bearer {{adminToken}}
+
+###
+
+### Admin: get students by grade
+GET {{baseUrl}}/api/students?grade={{gradeId}}
+Authorization: Bearer {{adminToken}}
+
+###
+
+### Admin: get students by subject
+GET {{baseUrl}}/api/students?subject={{subjectId}}
+Authorization: Bearer {{adminToken}}
+
+###
+
+### Admin: get students by access status
+GET {{baseUrl}}/api/students?accessStatus=active
+Authorization: Bearer {{adminToken}}
+
+###
+
+### Admin: get students by grade and subject
+GET {{baseUrl}}/api/students?grade={{gradeId}}&subject={{subjectId}}
+Authorization: Bearer {{adminToken}}
+
+###
+
+### Admin: get single student's enrollments
+GET {{baseUrl}}/api/students/{{studentUserId}}/enrollments
+Authorization: Bearer {{adminToken}}
+
+###
+
+### Admin: get single student by ID
+GET {{baseUrl}}/api/students/{{studentUserId}}
+Authorization: Bearer {{adminToken}}
+
+###
+
+###
+
+### Login educator
+POST {{baseUrl}}/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "educator1@example.com",
+  "password": "123456789"
+}
+
+###
+
+### Login student
+POST {{baseUrl}}/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "student1@example.com",
+  "password": "123456789"
+}
+
+###
+
+### Get current admin
+GET {{baseUrl}}/api/auth/me
+Authorization: Bearer {{adminToken}}
+
+###
+
+### Get current educator
+GET {{baseUrl}}/api/auth/me
+Authorization: Bearer {{educatorToken}}
+
+###
+
+### Get current student
+GET {{baseUrl}}/api/auth/me
 Authorization: Bearer {{studentToken}}
 
+#######################################
+### 3. GRADES
+#######################################
 
-###topic
-GET http://localhost:5000/api/topics
+### Public: get all grades
+GET {{baseUrl}}/api/grades
+
+###
+
+### Admin: create grade
+POST {{baseUrl}}/api/grades
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "name": "Grade 10",
+  "value": 10
+}
+
+###
+
+### Admin: create another grade
+POST {{baseUrl}}/api/grades
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "name": "Grade 11",
+  "value": 11
+}
+
+###
+
+### Student tries to create grade (should fail)
+POST {{baseUrl}}/api/grades
+Authorization: Bearer {{studentToken}}
+Content-Type: application/json
+
+{
+  "name": "Grade 12",
+  "value": 12
+}
+
+###
+
+### Admin: update grade
+PUT {{baseUrl}}/api/grades/{{gradeId}}
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "name": "Grade 10 updated",
+  "value": 10
+}
+
+###
+
+### Admin: delete grade
+DELETE {{baseUrl}}/api/grades/{{secondGradeId}}
+Authorization: Bearer {{adminToken}}
+
+#######################################
+### 4. SUBJECTS
+#######################################
+
+### Public: get all subjects
+GET {{baseUrl}}/api/subjects
+
+###
+
+### Public: get subjects by grade
+GET {{baseUrl}}/api/subjects?grade={{gradeId}}
+
+###
+
+### Public: get single subject
+GET {{baseUrl}}/api/subjects/{{subjectId}}
+
+###
+
+### Admin: create subject
+POST {{baseUrl}}/api/subjects
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "name": "Mathematics",
+  "grade": "{{gradeId}}"
+}
+
+###
+
+### Admin: create another subject
+POST {{baseUrl}}/api/subjects
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "name": "Physical Sciences",
+  "grade": "{{gradeId}}"
+}
+
+###
+
+### Admin: update subject name
+PUT {{baseUrl}}/api/subjects/{{subjectId}}
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "name": "Applied Maths"
+}
+
+###
+
+### Admin: move subject to another grade
+PUT {{baseUrl}}/api/subjects/{{subjectId}}
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "name": "Mathematics",
+  "grade": "{{secondGradeId}}"
+}
+
+###
+
+### Admin: deactivate subject
+PUT {{baseUrl}}/api/subjects/{{subjectId}}
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "isActive": false
+}
+
+###
+
+### Admin: activate subject again
+PUT {{baseUrl}}/api/subjects/{{subjectId}}
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "isActive": true
+}
+
+###
+
+### Student tries to create subject (should fail)
+POST {{baseUrl}}/api/subjects
+Authorization: Bearer {{studentToken}}
+Content-Type: application/json
+
+{
+  "name": "Life Sciences",
+  "grade": "{{gradeId}}"
+}
+
+###
+
+### Admin: delete subject
+DELETE {{baseUrl}}/api/subjects/{{secondSubjectId}}
+Authorization: Bearer {{adminToken}}
+
+#######################################
+### 5. ENROLLMENTS
+#######################################
+
+### Admin: create enrollment for student
+POST {{baseUrl}}/api/enrollments
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "student": "{{studentUserId}}",
+  "grade": "{{gradeId}}",
+  "subject": "{{{{secondSubjectId}}}}"
+}
+
+###
+
+### Admin: create second enrollment for same student
+POST {{baseUrl}}/api/enrollments
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "student": "{{studentUserId}}",
+  "grade": "{{gradeId}}",
+  "subject": "{{secondSubjectId}}"
+}
+
+###
+
+### Admin: duplicate enrollment (should fail)
+POST {{baseUrl}}/api/enrollments
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "student": "{{studentUserId}}",
+  "grade": "{{gradeId}}",
+  "subject": "{{subjectId}}"
+}
+
+###
+
+### Admin: get all enrollments
+GET {{baseUrl}}/api/enrollments
+Authorization: Bearer {{adminToken}}
+
+###
+
+### Admin: get enrollments for one student
+GET {{baseUrl}}/api/enrollments/student/{{studentUserId}}
+Authorization: Bearer {{adminToken}}
+
+###
+
+### Student: get my enrollments
+GET {{baseUrl}}/api/enrollments/my-enrollments
+Authorization: Bearer {{studentToken}}
+
+###
+
+### Admin: mark enrollment as paid and active
+PUT {{baseUrl}}/api/enrollments/69ce8e99384fcadc8e6c779a
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "paymentStatus": "paid",
+  "accessStatus": "active",
+  "amountPaid": 100
+}
+
+###
+
+### Admin: expire enrollment
+PUT {{baseUrl}}/api/enrollments/{{enrollmentId}}
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "accessStatus": "expired"
+}
+
+###
+
+### Student tries to create enrollment (should fail)
+POST {{baseUrl}}/api/enrollments
+Authorization: Bearer {{studentToken}}
+Content-Type: application/json
+
+{
+  "student": "{{studentUserId}}",
+  "grade": "{{gradeId}}",
+  "subject": "{{subjectId}}"
+}
+
+#######################################
+### 6. TOPICS
+#######################################
+
+### Admin: create topic
+POST {{baseUrl}}/api/topics
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "name": "Probability",
+  "grade": "{{gradeId}}",
+  "subject": "{{subjectId}}",
+  "term": 1,
+  "order": 1,
+  "description": "Introduction to probability"
+}
+
+###
+
+### Admin: create second topic
+POST {{baseUrl}}/api/topics
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "name": "Algebraic Expressions",
+  "grade": "{{gradeId}}",
+  "subject": "{{subjectId}}",
+  "term": 1,
+  "order": 2,
+  "description": "Introduction to algebraic expressions"
+}
+
+###
+
+### Admin: get all topics
+GET {{baseUrl}}/api/topics
+Authorization: Bearer {{adminToken}}
+
+###
+
+### Student: get my topics
+GET {{baseUrl}}/api/topics/my-topics
+Authorization: Bearer {{studentToken}}
+
+###
+
+### Admin: get single topic by ID
+GET {{baseUrl}}/api/topics/{{topicId}}
+Authorization: Bearer {{adminToken}}
+
+###
+
+### Student: get single allowed topic by ID
+GET {{baseUrl}}/api/topics/{{topicId}}
+Authorization: Bearer {{studentToken}}
+
+###
+
+### Student tries to create topic (should fail)
+POST {{baseUrl}}/api/topics
+Authorization: Bearer {{studentToken}}
+Content-Type: application/json
+
+{
+  "name": "Unauthorized Topic",
+  "grade": "{{gradeId}}",
+  "subject": "{{subjectId}}",
+  "term": 1,
+  "order": 3
+}
+
+###
+
+### Admin: update topic
+PUT {{baseUrl}}/api/topics/{{topicId}}
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "name": "Algebraic Expressions Updated",
+  "grade": "{{gradeId}}",
+  "subject": "{{subjectId}}",
+  "term": 1,
+  "order": 1,
+  "isActive": true
+}
+
+###
+
+### Admin: deactivate topic
+PUT {{baseUrl}}/api/topics/{{topicId}}
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "isActive": false
+}
+
+###
+
+### Admin: activate topic again
+PUT {{baseUrl}}/api/topics/{{topicId}}
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "isActive": true
+}
+
+###
+
+### Admin: delete topic
+DELETE {{baseUrl}}/api/topics/{{topicId}}
+Authorization: Bearer {{adminToken}}
+
+#######################################
+### 7. LESSONS
+#######################################
+
+### Admin: create lesson
+POST {{baseUrl}}/api/lessons
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "title": "Introduction to Algebra",
+  "lessonNumber": 1,
+  "grade": "{{gradeId}}",
+  "subject": "{{subjectId}}",
+  "topic": "{{topicId}}",
+  "term": 1,
+  "videoUrl": "http//:lesson1video",
+  "pdfUrl": "http//:lesson1pdf",
+  "description": "First lesson under this topic",
+  "isPublished": true,
+  "isActive": true,
+  "order": 1
+}
+
+###
+
+### Admin: get all lessons
+GET {{baseUrl}}/api/lessons
+Authorization: Bearer {{adminToken}}
+
+###
+
+### Student: get my lessons
+GET {{baseUrl}}/api/lessons/my-lessons
+Authorization: Bearer {{studentToken}}
+
+###
+
+### Admin: get lessons by topic
+GET {{baseUrl}}/api/lessons/topic/{{topicId}}
+Authorization: Bearer {{adminToken}}
+
+###
+
+### Admin: get single lesson by ID
+GET {{baseUrl}}/api/lessons/{{lessonId}}
+Authorization: Bearer {{adminToken}}
+
+###
+
+### Student: get single allowed lesson by ID
+GET {{baseUrl}}/api/lessons/{{lessonId}}
+Authorization: Bearer {{studentToken}}
+
+###
+
+### Student tries to create lesson (should fail)
+POST {{baseUrl}}/api/lessons
+Authorization: Bearer {{studentToken}}
+Content-Type: application/json
+
+{
+  "title": "Unauthorized Lesson",
+  "lessonNumber": 2,
+  "grade": "{{gradeId}}",
+  "subject": "{{subjectId}}",
+  "topic": "{{topicId}}",
+  "term": 1,
+  "order": 2
+}
+
+###
+
+### Admin: update lesson
+PUT {{baseUrl}}/api/lessons/{{lessonId}}
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "title": "Introduction to Algebra Updated",
+  "lessonNumber": 1,
+  "grade": "{{gradeId}}",
+  "subject": "{{subjectId}}",
+  "topic": "{{topicId}}",
+  "term": 1,
+  "description": "Updated lesson description",
+  "isPublished": true,
+  "isActive": true,
+  "order": 1
+}
+
+###
+
+### Admin: unpublish lesson
+PUT {{baseUrl}}/api/lessons/{{lessonId}}
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "isPublished": false
+}
+
+###
+
+### Admin: publish lesson again
+PUT {{baseUrl}}/api/lessons/{{lessonId}}
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "isPublished": true
+}
+
+###
+
+### Admin: deactivate lesson
+PUT {{baseUrl}}/api/lessons/{{lessonId}}
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "isActive": false
+}
+
+###
+
+### Admin: activate lesson again
+PUT {{baseUrl}}/api/lessons/{{lessonId}}
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "isActive": true
+}
+
+###
+
+### Admin: delete lesson
+DELETE {{baseUrl}}/api/lessons/{{lessonId}}
+Authorization: Bearer {{adminToken}}
+
+#######################################
+### 8. MCQs
+#######################################
+@mcqId = 69cddb48e9b41fe9ec4e23bb
+### Admin: create MCQ for a lesson
+POST {{baseUrl}}/api/mcqs
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "lesson": "{{lessonId}}",
+  "instructions": "Answer all questions",
+  "questions": [
+    {
+      "questionText": "What is 2 + 2?",
+      "questionImageUrl": "",
+      "options": ["1", "2", "4", "5"],
+      "correctAnswer": 2,
+      "explanation": "2 + 2 = 4"
+    },
+    {
+      "questionText": "Which of the following is an even number?",
+      "questionImageUrl": "",
+      "options": ["3", "7", "10", "11"],
+      "correctAnswer": 2,
+      "explanation": "10 is divisible by 2"
+    }
+  ],
+  "isPublished": true,
+  "isActive": true
+}
+
+###
+
+### Admin: get all MCQs
+GET {{baseUrl}}/api/mcqs
+Authorization: Bearer {{adminToken}}
+
+###
+
+### Admin: get MCQ by lesson ID
+GET {{baseUrl}}/api/mcqs/lesson/{{lessonId}}
+Authorization: Bearer {{adminToken}}
+
+###
+
+### Student: get MCQ for lesson
+GET {{baseUrl}}/api/mcqs/student/lesson/{{lessonId}}
+Authorization: Bearer {{studentToken}}
+
+###
+
+### Student: submit MCQ answers
+POST {{baseUrl}}/api/mcqs/student/submit/{{lessonId}}
+Authorization: Bearer {{studentToken}}
+Content-Type: application/json
+
+{
+  "answers": [2, 2]
+}
+
+###
+
+### Admin: update MCQ
+PUT {{baseUrl}}/api/mcqs/{{mcqId}}
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "instructions": "Answer carefully",
+  "questions": [
+    {
+      "questionText": "What is 5 + 5?",
+      "questionImageUrl": "",
+      "options": ["8", "9", "10", "11"],
+      "correctAnswer": 2,
+      "explanation": "5 + 5 = 10"
+    },
+    {
+      "questionText": "Which number is a multiple of 3?",
+      "questionImageUrl": "",
+      "options": ["7", "8", "9", "10"],
+      "correctAnswer": 2,
+      "explanation": "9 is a multiple of 3"
+    }
+  ],
+  "isPublished": true,
+  "isActive": true
+}
+
+###
+
+### Admin: delete MCQ
+DELETE {{baseUrl}}/api/mcqs/{{mcqId}}
+Authorization: Bearer {{adminToken}}
+
+
+#######################################
+### 9. MCQ ATTEMPT / SUBMIT TESTS
+#######################################
+
+### Student: submit MCQ answers for the first time (should save score)
+POST {{baseUrl}}/api/mcqs/student/submit/{{lessonId}}
+Authorization: Bearer {{studentToken}}
+Content-Type: application/json
+
+{
+  "answers": [2, 2]
+}
+
+###
+
+### Student: submit the same MCQ again (should fail - one attempt only)
+POST {{baseUrl}}/api/mcqs/student/submit/{{lessonId}}
+Authorization: Bearer {{studentToken}}
+Content-Type: application/json
+
+{
+  "answers": [1, 0]
+}
+
+###
+
+### Student: submit with invalid answers format (should fail)
+POST {{baseUrl}}/api/mcqs/student/submit/{{lessonId}}
+Authorization: Bearer {{studentToken}}
+Content-Type: application/json
+
+{
+  "answers": "not-an-array"
+}
+
+###
+
+### Student: submit with missing token (should fail)
+POST {{baseUrl}}/api/mcqs/student/submit/{{lessonId}}
+Content-Type: application/json
+
+{
+  "answers": [2, 2]
+}
+
+###
+
+### Student: submit with wrong lesson ID (should fail)
+POST {{baseUrl}}/api/mcqs/student/submit/123
+Authorization: Bearer {{studentToken}}
+Content-Type: application/json
+
+{
+  "answers": [2, 2]
+}
+
+###
+
+### Admin tries to submit as student route (should fail)
+POST {{baseUrl}}/api/mcqs/student/submit/{{lessonId}}
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "answers": [2, 2]
+}
+
+
+
+
+#######################################
+### RESULTS
+#######################################
+
+### Student: get my results
+GET {{baseUrl}}/api/results/my-results
+Authorization: Bearer {{studentToken}}
+
+###
+
+### Admin: get all results page 1
+GET {{baseUrl}}/api/results?page=1&limit=10
+Authorization: Bearer {{adminToken}}
+
+###
+
+### Admin: get all results page 2
+GET {{baseUrl}}/api/results?page=2&limit=10
+Authorization: Bearer {{adminToken}}
+
+###
+
+### Admin: get all results with bigger limit
+GET {{baseUrl}}/api/results?page=1&limit=20
+Authorization: Bearer {{adminToken}}
+
+###
+
+### Admin: get result summary
+GET {{baseUrl}}/api/results/summary
+Authorization: Bearer {{adminToken}}
+
+###
+
+### Admin: get results by student
+GET {{baseUrl}}/api/results/student/{{studentId}}
+Authorization: Bearer {{adminToken}}
+
+###
+
+### Admin: get results by lesson
+GET {{baseUrl}}/api/results/lesson/{{lessonId}}
+Authorization: Bearer {{adminToken}}
+
+###
+
+### Admin: get results by subject
+GET {{baseUrl}}/api/results/subject/{{subjectId}}
+Authorization: Bearer {{adminToken}}
+
+###
+
+### Admin: get results by mcq
+GET {{baseUrl}}/api/results/mcq/{{mcqId}}
+Authorization: Bearer {{adminToken}}
+
+###
+
+### Student tries to get all results (should fail)
+GET {{baseUrl}}/api/results?page=1&limit=10
+Authorization: Bearer {{studentToken}}
+
+###
+
+### Student tries to get result summary (should fail)
+GET {{baseUrl}}/api/results/summary
+Authorization: Bearer {{studentToken}}
+
+###
+
+### Student tries to get another student's results (should fail)
+GET {{baseUrl}}/api/results/student/{{studentId}}
+Authorization: Bearer {{studentToken}}
+
+###
+
+### Admin: invalid student ID
+GET {{baseUrl}}/api/results/student/123
+Authorization: Bearer {{adminToken}}
+
+###
+
+### Admin: invalid lesson ID
+GET {{baseUrl}}/api/results/lesson/123
+Authorization: Bearer {{adminToken}}
+
+###
+
+### Admin: invalid subject ID
+GET {{baseUrl}}/api/results/subject/123
+Authorization: Bearer {{adminToken}}
+
+###
+
+### Admin: invalid mcq ID
+GET {{baseUrl}}/api/results/mcq/123
+Authorization: Bearer {{adminToken}}
+
+###
+
+### No token: get all results (should fail)
+GET {{baseUrl}}/api/results?page=1&limit=10
+
+###
+
+
+@baseUrl = http://localhost:5000
+
+#######################################
+### ACTIVE VARIABLES
+#######################################
+
+@studentToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5Y2RkMGI4ZDgzZWI4MjUwYTFkMzQ5ZCIsImlhdCI6MTc3NTEzNDQ0NSwiZXhwIjoxNzc3NzI2NDQ1fQ.K_vtGWTj9YHr-OCp3L24pPDhj9qz9tQY7ZHLBWb6phU
+@studentUserId = 69cdd0b8d83eb8250a1d349d
+
+@gradeId = 69cdd100d83eb8250a1d34a2
+@subjectId = 69cdd14ed83eb8250a1d34ad
+@topicId = 69cdd266d83eb8250a1d34e1
+@lessonId = 69cdd5671f729203429e1284
+
+#######################################
+### 1. STUDENT AUTH
+#######################################
+
+### Login student
+POST {{baseUrl}}/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "student1@example.com",
+  "password": "123456789"
+}
+
+###
+
+### Get current student
+GET {{baseUrl}}/api/auth/me
+Authorization: Bearer {{studentToken}}
+
+#######################################
+### 2. STUDENT ENROLLMENTS
+#######################################
+
+### Get my enrollments
+GET {{baseUrl}}/api/enrollments/my-enrollments
+Authorization: Bearer {{studentToken}}
+
+#######################################
+### 3. STUDENT TOPICS
+#######################################
+
+### Get my topics
+GET {{baseUrl}}/api/topics/my-topics
+Authorization: Bearer {{studentToken}}
+
+###
+
+### Get single allowed topic by ID
+GET {{baseUrl}}/api/topics/{{topicId}}
+Authorization: Bearer {{studentToken}}
+
+#######################################
+### 4. STUDENT LESSONS
+#######################################
+
+### Get my lessons
+GET {{baseUrl}}/api/lessons/my-lessons
+Authorization: Bearer {{studentToken}}
+
+###
+
+### Get lessons by topic
+GET {{baseUrl}}/api/lessons/topic/{{topicId}}
+Authorization: Bearer {{studentToken}}
+
+###
+
+### Get single allowed lesson by ID
+GET {{baseUrl}}/api/lessons/{{lessonId}}
+Authorization: Bearer {{studentToken}}
+
+#######################################
+### 5. STUDENT MCQ
+#######################################
+
+### Get MCQ for lesson
+GET {{baseUrl}}/api/mcqs/student/lesson/{{lessonId}}
+Authorization: Bearer {{studentToken}}
+
+###
+
+### Submit MCQ answers
+POST {{baseUrl}}/api/mcqs/student/submit/{{lessonId}}
+Authorization: Bearer {{studentToken}}
+Content-Type: application/json
+
+{
+  "answers": [2, 2]
+}
+
+#######################################
+### 6. STUDENT MCQ EDGE CASES
+#######################################
+
+### Submit same MCQ again (should fail)
+POST {{baseUrl}}/api/mcqs/student/submit/{{lessonId}}
+Authorization: Bearer {{studentToken}}
+Content-Type: application/json
+
+{
+  "answers": [1, 0]
+}
+
+###
+
+### Submit invalid answers format (should fail)
+POST {{baseUrl}}/api/mcqs/student/submit/{{lessonId}}
+Authorization: Bearer {{studentToken}}
+Content-Type: application/json
+
+{
+  "answers": "not-an-array"
+}
+
+###
+
+### Submit without token (should fail)
+POST {{baseUrl}}/api/mcqs/student/submit/{{lessonId}}
+Content-Type: application/json
+
+{
+  "answers": [2, 2]
+}
+
+###
+
+### Submit with wrong lesson ID (should fail)
+POST {{baseUrl}}/api/mcqs/student/submit/123
+Authorization: Bearer {{studentToken}}
+Content-Type: application/json
+
+{
+  "answers": [2, 2]
+}
+
+
+
+### Student: get my subjects
+GET {{baseUrl}}/api/subjects/my-subjects
+Authorization: Bearer {{studentToken}}
