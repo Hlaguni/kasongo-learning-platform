@@ -1,6 +1,7 @@
 import express from "express";
 import dotenv from "dotenv";
 import cors from "cors";
+import rateLimit from "express-rate-limit";
 import connectDB from "./config/db.js";
 import authRoutes from "./routes/authRoutes.js";
 import subjectRoutes from "./routes/subjectRoutes.js";
@@ -22,7 +23,7 @@ const app = express();
 const allowedOrigins = [
   "http://localhost:5173",
   "http://127.0.0.1:5173",
-  "https://kasongo-learning-platform-11xi.vercel.app",
+  "https://kasongo-learning-platform-i1xi.vercel.app",
 ];
 
 app.use(
@@ -40,21 +41,42 @@ app.use(
 
 app.use(express.json());
 
+// Rate limiters
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 10,
+  message: {
+    message: "Too many authentication attempts. Please try again later.",
+  },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
+const apiLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 300,
+  message: {
+    message: "Too many requests from this IP. Please try again later.",
+  },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
 // Health check
 app.get("/api/health", (req, res) => {
   res.json({ message: "API is running" });
 });
 
-// Routes
-app.use("/api/auth", authRoutes);
-app.use("/api/grades", gradeRoutes);
-app.use("/api/subjects", subjectRoutes);
-app.use("/api/topics", topicRoutes);
-app.use("/api/enrollments", enrollmentRoutes);
-app.use("/api/lessons", lessonRoutes);
-app.use("/api/mcqs", mcqRoutes);
-app.use("/api/results", resultRoutes);
-app.use("/api/students", studentRoutes);
+// Routes with rate limiting
+app.use("/api/auth", authLimiter, authRoutes);
+app.use("/api/grades", apiLimiter, gradeRoutes);
+app.use("/api/subjects", apiLimiter, subjectRoutes);
+app.use("/api/topics", apiLimiter, topicRoutes);
+app.use("/api/enrollments", apiLimiter, enrollmentRoutes);
+app.use("/api/lessons", apiLimiter, lessonRoutes);
+app.use("/api/mcqs", apiLimiter, mcqRoutes);
+app.use("/api/results", apiLimiter, resultRoutes);
+app.use("/api/students", apiLimiter, studentRoutes);
 
 // Default route
 app.get("/", (req, res) => {
